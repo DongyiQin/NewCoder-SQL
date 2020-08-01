@@ -1,0 +1,45 @@
+题目描述：
+获取当前（to_date='9999-01-01'）薪水第二多的员工的emp_no以及其对应的薪水salary
+CREATE TABLE `salaries` (
+`emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`from_date`));
+
+答案1；
+SELECT S1.emp_no, MAX(S1.salary) 
+FROM salaries S1
+WHERE to_date='9999-01-01' AND salary NOT IN(
+    SELECT MAX(S2.salary)
+    FROM salaries S2
+)
+# 除去最大值之后的最大值
+
+答案2：
+SELECT emp_no, salary
+FROM salaries
+WHERE to_date='9999-01-01'
+ORDER BY salary DESC LIMIT 1,1
+
+#limit用法：
+两个参数：第一个参数表示初始位置，第二个参数表示取几个记录。
+          mysql> SELECT * FROM table LIMIT 5,10; // 检索记录行 6-15
+          为了检索从某一个偏移量到记录集的结束所有的记录行，可以指定第二个参数为 -1： 
+          mysql> SELECT * FROM table LIMIT 95,-1; // 检索记录行 96-last.
+
+一个参数：返回最大的记录行数目： 
+          mysql> SELECT * FROM table LIMIT 5; //检索前 5 个记录行
+          换句话说，LIMIT n 等价于 LIMIT 0,n。
+
+答案3：
+SELECT emp_no, salary
+FROM(
+    SELECT emp_no, salary,
+    Dense_Rank() OVER (ORDER BY Salary DESC) AS rank
+    FROM salaries
+    WHERE to_date='9999-01-01'
+)X
+WHERE X.rank = 2
+#排序为2的值
+
