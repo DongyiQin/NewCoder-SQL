@@ -27,3 +27,4 @@ LEFT JOIN departments D ON DE.dept_no = D.dept_no
 
 要想包括暂时没有分配部门的员工，就得要求员工表全取！
 所以员工表作为最左边的表去依次左连接别的表！
+
