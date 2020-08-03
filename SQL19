@@ -1,0 +1,29 @@
+题目描述
+查找所有员工的last_name和first_name以及对应的dept_name，也包括暂时没有分配部门的员工
+CREATE TABLE `departments` (
+`dept_no` char(4) NOT NULL,
+`dept_name` varchar(40) NOT NULL,
+PRIMARY KEY (`dept_no`));
+CREATE TABLE `dept_emp` (
+`emp_no` int(11) NOT NULL,
+`dept_no` char(4) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`dept_no`));
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+
+答案：
+SELECT E.last_name, E.first_name,D.dept_name
+FROM employees E 
+LEFT JOIN dept_emp DE ON E.emp_no = DE.emp_no
+LEFT JOIN departments D ON DE.dept_no = D.dept_no
+
+要想包括暂时没有分配部门的员工，就得要求员工表全取！
+所以员工表作为最左边的表去依次左连接别的表！
