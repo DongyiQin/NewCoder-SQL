@@ -1,0 +1,26 @@
+题目描述
+查找员工编号emp_no为10001其自入职以来的薪水salary涨幅(总共涨了多少)growth(可能有多次涨薪，没有降薪)
+CREATE TABLE `salaries` (
+`emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`from_date`));
+
+
+答案：
+SELECT (MAX_Salary - MIN_Salary) AS 'growth'
+FROM(
+    (SELECT salary AS MAX_Salary
+    FROM salaries
+    WHERE emp_no = 10001 
+    ORDER BY to_date DESC LIMIT 1), 
+    (SELECT salary AS MIN_Salary
+    FROM salaries
+    WHERE emp_no = 10001 
+    ORDER BY to_date ASC LIMIT 1)
+)
+
+
+涨幅：最晚的日期对应薪水-最早的日期对应薪水
+最晚日期和最早日期通过排序获得，最晚日期为降序排列的第一个；最早日期为升序排列的第一个。
