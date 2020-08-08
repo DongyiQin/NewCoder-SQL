@@ -1,0 +1,42 @@
+t_user_login：表名
+user_id: 用户id
+login_time：登录日期时间
+查询七日留存率
+
+1、查询所有用户的所有登录日期，并将这些登录日期按照时间从小到大进行排序
+  ( SELECT user_id AS user_id_day0, DATE(login_time) AS login_day0
+    FROM t_user_login
+    GROUP BY user_id
+    ORDER BY login_day0
+  ) AS A
+
+2、查询到某一天之后的第7天，仍然在登录的用户：
+   两表连接，一个登录日期对应一个第七天还在登录的用户
+    A
+    LEFT JOIN t_user_login B 
+    ON A.user_id = B.user_id AND DATEDIFF(B.login_time,A.login_day0) = 6
+ 
+ 3、查询得到某一天，对应的登录用户，以及七天后还在登录的日期
+ (SELECT login_day0, A.user_id_day0, B.user_id AS user_id_day7
+  FROM(
+         SELECT user_id AS user_id_day0, DATE(login_time) AS login_day0
+         FROM t_user_login
+         GROUP BY user_id
+         ORDER BY login_day0) AS A
+          LEFT JOIN t_user_login B 
+          ON A.AS user_id_day0 = B.user_id AND DATEDIFF(B.login_time,A.login_day0) = 6
+ ) AS Temp
+ 
+ 4、计算留存率
+ SELECT login_day0 AS '日期', COUNT(user_id_day0) AS '新增用户数', COUNT(user_id_day7)/COUNT(user_id_day0) AS '七日留存率'
+ FROM(
+      SELECT login_day0, A.user_id_day0, B.user_id AS user_id_day7
+      FROM(
+           SELECT user_id AS user_id_day0, DATE(login_time) AS login_day0
+           FROM t_user_login
+           GROUP BY user_id
+           ORDER BY login_day0) AS A
+           LEFT JOIN t_user_login B 
+           ON A.AS user_id_day0 = B.user_id AND DATEDIFF(B.login_time,A.login_day0) = 6
+      ) AS Temp
+ GROUP BY login_day0
