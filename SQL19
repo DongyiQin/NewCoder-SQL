@@ -31,3 +31,4 @@ LEFT JOIN departments D ON DE.dept_no = D.dept_no
 左连接是左边的表取全，右边的表确省的补null，多余的不显示；
 右连接是右边的表取全，左边的表确省的补null，多余的不显示；
 内连接是取两表交集。
+
